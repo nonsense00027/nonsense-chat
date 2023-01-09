@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .form-input {
+    @apply border-b w-full bg-transparent focus:outline-none px-1 py-4;
+  }
+
+  .form-submit-button {
+    @apply bg-primary w-full text-white text-sm rounded-sm py-2 my-1 font-bold;
+  }
+
+  .conversation-header-icon {
+    @apply w-5 h-5 object-contain text-primary;
+  }
+
+  .conversation-send-icon {
+    @apply w-4 h-4 object-contain text-primary;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+
+  /* color-scheme: light dark; */
+  /* color: rgba(255, 255, 255, 0.87); */
+  /* background-color: #242424; */
+
+  /* font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%; */
+}
+
+body {
+  min-height: 100vh;
+}
