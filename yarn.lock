@@ -1701,6 +1701,16 @@ react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
+react-firebase-hooks@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/react-firebase-hooks/-/react-firebase-hooks-5.1.1.tgz#fc92bb4b860c6753c806583f64d7f069b6ee6785"
+  integrity sha512-y2UpWs82xs+39q5Rc/wq316ca52QsC0n8m801V+yM4IC4hbfOL4yQPVSh7w+ydstdvjN9F+lvs1WrO2VYxpmdA==
+
+react-firestore-hooks@^0.0.1-0:
+  version "0.0.1-0"
+  resolved "https://registry.yarnpkg.com/react-firestore-hooks/-/react-firestore-hooks-0.0.1-0.tgz#219bd58fbe11d206f0def792e40cad3f4a08f94c"
+  integrity sha512-kewJn1dCeQUt1L3d21QkgrSYShEoOxdhk0aXy6Q4qRrjIaU0Q2hgEVJA3Q3X93r8A1WjLncwtQ+h7U09euQqeA==
+
 react-flip-move@^3.0.5:
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/react-flip-move/-/react-flip-move-3.0.5.tgz#8b87510ad32ebef01ebca94902b445f456bbc0f7"

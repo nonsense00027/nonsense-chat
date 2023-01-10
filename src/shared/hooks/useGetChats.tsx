@@ -1,6 +1,6 @@
 import React from "react";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
-import { collection, query, where } from "firebase/firestore";
+import { collection, orderBy, query, where } from "firebase/firestore";
 import { db } from "~/configs/firebase/firebase";
 import { collectIdsAndDocs } from "../utils";
 import useCurrentUser from "./useCurrentUser";
@@ -11,7 +11,8 @@ function useGetChats() {
 
   const ref = query(
     collection(db, "chats"),
-    where("participants", "array-contains", currentUser?.uid)
+    where("participants", "array-contains", currentUser?.uid),
+    orderBy("timestamp", "desc")
   );
 
   const { data, ...others } = useFirestoreQuery(["users"], ref, {

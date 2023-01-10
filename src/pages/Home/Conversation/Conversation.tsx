@@ -1,9 +1,13 @@
 import React, { useEffect, useRef } from "react";
-import { useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
+import { collection, orderBy, query } from "firebase/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
 
-import useConversation from "~/shared/hooks/useConversation";
+import { db } from "~/configs/firebase/firebase";
+
 import useConversationInfo from "~/shared/hooks/useConversationInfo";
+import { IMessage } from "~/shared/models";
+import { collectIdsAndDocs } from "~/shared/utils";
 
 import Header from "./components/Header/Header";
 import MessageLists from "./components/MessageLists/MessageLists";
@@ -26,31 +30,31 @@ function Conversation() {
     id: conversationId,
   });
 
-  const { data: messages, status: messagesStatus } = useConversation({
-    id: conversationId,
-    success: scrollToBottom,
+  const ref = query(
+    collection(db, "chats", conversationId, "messages"),
+    orderBy("timestamp", "asc")
+  );
+
+  const [value, loading, error] = useCollection(ref, {
+    snapshotListenOptions: { includeMetadataChanges: true },
   });
 
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    return () => {
-      queryClient.refetchQueries(["conversation", conversationId]);
-    };
-  }, [conversationId]);
-
   function scrollToBottom() {
-    console.log("scrolling");
     bottomDivRef.current?.scrollIntoView({ behavior: "smooth" });
   }
 
   useEffect(() => {
-    if (messagesStatus !== "success" || !chatComponentRef.current) return;
+    if (loading || !chatComponentRef.current) return;
     chatComponentRef.current.scrollTop = chatComponentRef.current.scrollHeight;
-  }, [messagesStatus]);
+  }, [loading]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [value]);
+
+  if (loading) {
+    return <div></div>;
+  }
 
   return (
     <div className="flex h-screen flex-col">
@@ -61,7 +65,9 @@ function Conversation() {
         ref={chatComponentRef}
         className="bg-gray px-4 flex-1 overflow-scroll"
       >
-        <MessageLists messages={messages || []} />
+        <MessageLists
+          messages={(value?.docs.map(collectIdsAndDocs) as IMessage[]) || []}
+        />
         <div ref={bottomDivRef} />
       </div>
 

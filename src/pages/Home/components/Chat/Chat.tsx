@@ -1,6 +1,6 @@
 import { User } from "firebase/auth";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useCurrentUser from "~/shared/hooks/useCurrentUser";
 import useGetUserInfo from "~/shared/hooks/useGetUserInfo";
 import { formatConversationId } from "~/shared/utils";
@@ -16,6 +16,7 @@ function Chat(props: ChatProps) {
   const { id, message, participants, lastMessageUser } = props;
 
   const navigate = useNavigate();
+  const { conversationId } = useParams();
 
   const { data } = useCurrentUser();
 
@@ -28,6 +29,11 @@ function Chat(props: ChatProps) {
 
     const userId = participants.filter((item) => item !== currentUser.uid)[0];
     return userId;
+  }
+
+  function isChatActive() {
+    const currentUser = data as User;
+    return formatConversationId(currentUser.uid, id) === conversationId;
   }
 
   const handleClick = () => {
@@ -43,9 +49,12 @@ function Chat(props: ChatProps) {
     if (lastMessageUser === data.uid) return "You: ";
     return null;
   }
+
   return (
     <div
-      className="p-2 hover:bg-gray cursor-pointer transition-all duration-150 ease-out rounded-md"
+      className={`p-2 ${
+        isChatActive() ? "bg-gray" : null
+      } hover:bg-gray cursor-pointer transition-all duration-150 ease-out rounded-md`}
       onClick={handleClick}
     >
       <div className="flex gap-2 items-center">
