@@ -1,5 +1,5 @@
 import React from "react";
-import { IChat, User } from "~/shared/models";
+import { IChat, IUser, User } from "~/shared/models";
 import Chat from "../Chat/Chat";
 
 interface ChatListsProps {

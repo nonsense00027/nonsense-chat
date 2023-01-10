@@ -1,27 +1,29 @@
 import React, { useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
-import { IChat, User } from "~/shared/models";
 import useDebounce from "~/shared/hooks/useDebounce";
 import useSearchUsers from "~/shared/hooks/useSearchUsers";
 
 import ChatLists from "../ChatLists/ChatLists";
 import useGetChats from "~/shared/hooks/useGetChats";
-import useCurrentUser from "~/shared/hooks/useCurrentUser";
+import SearchLists from "../SearchLists/SearchLists";
 
 function Chats() {
   const [search, setSearch] = useState<string>("");
 
   const debouncedValue = useDebounce({ value: search, delay: 500 });
 
-  const { data } = useSearchUsers({ searchStr: debouncedValue });
+  const { data: searchLists } = useSearchUsers({ searchStr: debouncedValue });
 
   const { data: availableChats, isFetching } = useGetChats();
 
-  const getChats = () => {
-    if (data && search.length > 0) return data as IChat[];
-    return availableChats as IChat[];
-  };
+  function isSearching() {
+    if (search.length > 0) return true;
+  }
+
+  function resetSearch() {
+    setSearch("");
+  }
 
   if (isFetching) {
     return <div></div>;
@@ -50,8 +52,11 @@ function Chats() {
         </form>
       </div>
 
-      {/* CHAT LISTS */}
-      <ChatLists chats={getChats()} />
+      {isSearching() ? (
+        <SearchLists resetSearch={resetSearch} lists={searchLists || []} />
+      ) : (
+        <ChatLists chats={availableChats} />
+      )}
     </div>
   );
 }

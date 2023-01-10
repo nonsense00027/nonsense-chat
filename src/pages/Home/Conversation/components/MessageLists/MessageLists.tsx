@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FlipMove from "react-flip-move";
+import { useQueryClient } from "react-query";
+import useConversation from "~/shared/hooks/useConversation";
 
 import { IMessage } from "~/shared/models";
 
@@ -7,6 +9,8 @@ import Message from "../Message/Message";
 
 interface MessageListsProps {
   messages: IMessage[];
+  // conversationId: string;
+  // scrollToBottom: Function;
 }
 
 function MessageLists({ messages }: MessageListsProps) {
@@ -25,4 +29,4 @@ function MessageLists({ messages }: MessageListsProps) {
   );
 }
 
-export default React.memo(MessageLists);
+export default MessageLists;

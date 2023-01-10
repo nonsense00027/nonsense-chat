@@ -17,6 +17,13 @@ export interface User {
   photoURL: string;
 }
 
+export interface IUser {
+  id: string;
+  displayName: string;
+  email: string;
+  photoURL: string;
+}
+
 export interface IMessage {
   id: string;
   message: string;
@@ -35,4 +42,12 @@ export interface IChat {
   participants: string[];
   status: ChatStatus;
   lastMessage: ILastMessage;
+}
+
+export interface IConversation {
+  id: string;
+  participants: string[];
+  status: ChatStatus;
+  lastMessage: ILastMessage;
+  timestamp: string;
 }

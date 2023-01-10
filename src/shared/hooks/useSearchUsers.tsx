@@ -3,8 +3,8 @@ import { useFirestoreQuery } from "@react-query-firebase/firestore";
 import { collection, query, where } from "firebase/firestore";
 import { db } from "~/configs/firebase/firebase";
 import { collectIdsAndDocs } from "../utils";
-import { useAuthUser } from "@react-query-firebase/auth";
 import useCurrentUser from "./useCurrentUser";
+import { IUser } from "../models";
 
 interface UseSearchUsersProps {
   searchStr: string;
@@ -20,7 +20,7 @@ function useSearchUsers({ searchStr }: UseSearchUsersProps) {
 
   const { data, ...others } = useFirestoreQuery(["users", searchStr], ref);
 
-  const searchUsers = data?.docs.map(collectIdsAndDocs);
+  const searchUsers = data?.docs.map(collectIdsAndDocs) as IUser[];
 
   return { data: searchUsers, ...others };
 }

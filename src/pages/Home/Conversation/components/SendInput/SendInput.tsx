@@ -125,8 +125,8 @@ function SendInput({ conversationId, scrollToBottom }: SendInputProps) {
 
   return (
     <div className="w-full">
-      <div className="flex items-end justify-end">
-        <div ref={pickerRef}>
+      <div className="flex items-end justify-end bg-transparent">
+        <div ref={pickerRef} className="absolute">
           {emojiOpen ? (
             <Picker
               data={data}
@@ -151,6 +151,7 @@ function SendInput({ conversationId, scrollToBottom }: SendInputProps) {
         </div>
         <textarea
           autoFocus
+          placeholder="Aa"
           className="resize-none bg-transparent border-none w-full text-gray-700 mr-3 py-2 px-2 leading-tight focus:outline-none"
           ref={inputRef}
           rows={1}

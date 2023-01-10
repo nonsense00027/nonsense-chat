@@ -1,13 +1,16 @@
 import React, { useEffect, useRef } from "react";
+import { useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
 import useConversation from "~/shared/hooks/useConversation";
+import useConversationInfo from "~/shared/hooks/useConversationInfo";
 
 import Header from "./components/Header/Header";
 import MessageLists from "./components/MessageLists/MessageLists";
 import SendInput from "./components/SendInput/SendInput";
 
 function Conversation() {
+  const chatComponentRef = useRef<HTMLDivElement>(null);
   const bottomDivRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
@@ -19,33 +22,49 @@ function Conversation() {
     return <div></div>;
   }
 
-  const { data, isFetching } = useConversation({ id: conversationId });
+  const { data: convo, status: convoStatus } = useConversationInfo({
+    id: conversationId,
+  });
+
+  const { data: messages, status: messagesStatus } = useConversation({
+    id: conversationId,
+    success: scrollToBottom,
+  });
+
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    return () => {
+      queryClient.refetchQueries(["conversation", conversationId]);
+    };
+  }, [conversationId]);
 
   function scrollToBottom() {
+    console.log("scrolling");
     bottomDivRef.current?.scrollIntoView({ behavior: "smooth" });
   }
 
-  // useEffect(()=>{
+  useEffect(() => {
+    if (messagesStatus !== "success" || !chatComponentRef.current) return;
+    chatComponentRef.current.scrollTop = chatComponentRef.current.scrollHeight;
+  }, [messagesStatus]);
 
-  // },[])
-
-  if (isFetching) {
-    return <div></div>;
-  }
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <div className="flex h-screen flex-col">
-      {/* <div className="fixed top-0 left-0 w-full pl-[370px] max-w-[1080px] z-50"> */}
       <div className="w-full max-w-[1080px]">
         <Header />
       </div>
-      {/* <div className="px-4 pt-20 pb-32 relative h-full bg-gray min-h-screen"> */}
-      <div className="bg-gray px-4 flex-1 overflow-scroll">
-        <MessageLists messages={data} />
+      <div
+        ref={chatComponentRef}
+        className="bg-gray px-4 flex-1 overflow-scroll"
+      >
+        <MessageLists messages={messages || []} />
         <div ref={bottomDivRef} />
       </div>
 
-      {/* <div className="fixed bottom-0 left-0 w-full pl-[370px] max-w-[1080px] bg-gray"> */}
       <div className="w-full max-w-[1080px] bg-gray">
         <div className="p-6">
           <SendInput

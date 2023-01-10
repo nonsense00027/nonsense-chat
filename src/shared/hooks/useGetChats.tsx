@@ -4,6 +4,7 @@ import { collection, query, where } from "firebase/firestore";
 import { db } from "~/configs/firebase/firebase";
 import { collectIdsAndDocs } from "../utils";
 import useCurrentUser from "./useCurrentUser";
+import { IChat } from "../models";
 
 function useGetChats() {
   const { data: currentUser } = useCurrentUser();
@@ -17,7 +18,9 @@ function useGetChats() {
     subscribe: true,
   });
 
-  const availableChats = data?.docs.map(collectIdsAndDocs);
+  const availableChats = data
+    ? (data.docs.map(collectIdsAndDocs) as IChat[])
+    : [];
 
   return { data: availableChats, ...others };
 }

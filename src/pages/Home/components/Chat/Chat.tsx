@@ -3,6 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import useCurrentUser from "~/shared/hooks/useCurrentUser";
 import useGetUserInfo from "~/shared/hooks/useGetUserInfo";
+import { formatConversationId } from "~/shared/utils";
 
 interface ChatProps {
   id: string;
@@ -32,10 +33,9 @@ function Chat(props: ChatProps) {
   const handleClick = () => {
     const currentUser = data as User;
 
-    const refId =
-      currentUser.uid > id ? currentUser.uid + id : id + currentUser.uid;
-
-    navigate(`conversations/${refId}`);
+    navigate(`conversations/${formatConversationId(currentUser.uid, id)}`, {
+      replace: true,
+    });
   };
 
   function isLastMessageUserMe() {

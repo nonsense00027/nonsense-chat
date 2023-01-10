@@ -18,3 +18,12 @@ export const getSearchKeywords = (str: string) => {
       []
     );
 };
+
+export function formatConversationId(userId: string, conversationId: string) {
+  const formattedId = conversationId.replace(userId, "");
+
+  const refId =
+    userId > formattedId ? userId + formattedId : formattedId + userId;
+
+  return refId;
+}

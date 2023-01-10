@@ -1,6 +1,6 @@
 import { useFirestoreDocument } from "@react-query-firebase/firestore";
 import { doc } from "firebase/firestore";
-import React, { forwardRef, Ref } from "react";
+import React, { forwardRef, Ref, useEffect } from "react";
 import { QueryCache, useQueryClient } from "react-query";
 import { db } from "~/configs/firebase/firebase";
 import useCurrentUser from "~/shared/hooks/useCurrentUser";
@@ -51,4 +51,4 @@ const Message = forwardRef((props: MessageProps, ref: Ref<HTMLDivElement>) => {
   );
 });
 
-export default React.memo(Message);
+export default Message;
