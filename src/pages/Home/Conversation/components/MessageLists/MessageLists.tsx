@@ -23,6 +23,7 @@ function MessageLists({ messages }: MessageListsProps) {
           text={message.message}
           timestamp={message.timestamp}
           userId={message.userId}
+          attachments={message.attachments}
         />
       ))}
     </FlipMove>

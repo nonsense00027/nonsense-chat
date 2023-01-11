@@ -1,5 +1,6 @@
 import React, {
   ChangeEvent,
+  ClipboardEventHandler,
   FormEvent,
   useEffect,
   useRef,
@@ -21,6 +22,7 @@ import {
   useFirestoreDocumentMutation,
 } from "@react-query-firebase/firestore";
 import useCurrentUser from "~/shared/hooks/useCurrentUser";
+import ImageLists from "./components/ImageLists/ImageLists";
 
 interface SendInputProps {
   conversationId: string;
@@ -39,6 +41,7 @@ function SendInput({ conversationId, scrollToBottom }: SendInputProps) {
   const mutation = useFirestoreCollectionMutation(ref, {
     onSuccess: (_, variables) => {
       setInputMessage("");
+      setSelectedImages([]);
       scrollToBottom();
       conversationMutation.mutate({
         timestamp: serverTimestamp(),
@@ -61,6 +64,7 @@ function SendInput({ conversationId, scrollToBottom }: SendInputProps) {
   const [isRounded, setIsRounded] = useState(true);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
   const handleChange = (event: ChangeEvent) => {
     const { target } = event;
@@ -111,17 +115,40 @@ function SendInput({ conversationId, scrollToBottom }: SendInputProps) {
   function handleSendMessage(e: FormEvent) {
     e.preventDefault();
 
-    if (inputMessage.split(" ").join("").length < 1) {
+    if (
+      inputMessage.split(" ").join("").length < 1 &&
+      selectedImages.length < 1
+    ) {
       setInputMessage("");
       return;
     }
+
+    console.log(selectedImages);
 
     mutation.mutate({
       userId: currentUser?.uid,
       message: inputMessage,
       timestamp: serverTimestamp(),
+      attachments: {
+        type: "img",
+        data: selectedImages,
+      },
     });
   }
+
+  const handleOnpaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    if (event.clipboardData) {
+      const text = event.clipboardData.getData("text/html");
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, "text/html");
+      var image = doc.querySelector("img");
+
+      if (image) {
+        const src = image.src;
+        setSelectedImages((prevValue) => [...prevValue, src]);
+      }
+    }
+  };
 
   return (
     <div className="w-full">
@@ -149,20 +176,28 @@ function SendInput({ conversationId, scrollToBottom }: SendInputProps) {
           <PhotoIcon className="conversation-send-icon" />
           <ClipboardDocumentIcon className="conversation-send-icon" />
         </div>
-        <textarea
-          autoFocus
-          placeholder="Aa"
-          className="resize-none bg-transparent border-none w-full text-gray-700 mr-3 py-2 px-2 leading-tight focus:outline-none"
-          ref={inputRef}
-          rows={1}
-          value={inputMessage}
-          onChange={handleChange}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && !event.shiftKey) {
-              handleSendMessage(event);
+        <div className="flex-1">
+          {selectedImages.length > 0 ? (
+            <ImageLists images={selectedImages} />
+          ) : null}
+          <textarea
+            autoFocus
+            placeholder="Aa"
+            className="resize-none bg-transparent border-none w-full text-gray-700 mr-3 py-2 px-2 leading-tight focus:outline-none"
+            ref={inputRef}
+            rows={1}
+            value={inputMessage}
+            onChange={handleChange}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                handleSendMessage(event);
+              }
+            }}
+            onPaste={(event: React.ClipboardEvent<HTMLTextAreaElement>) =>
+              handleOnpaste(event)
             }
-          }}
-        />
+          />
+        </div>
 
         <button
           ref={openPickerButtonRef}

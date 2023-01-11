@@ -1,21 +1,25 @@
-import { useFirestoreDocument } from "@react-query-firebase/firestore";
+import React, { forwardRef, Ref } from "react";
 import { doc } from "firebase/firestore";
-import React, { forwardRef, Ref, useEffect } from "react";
-import { QueryCache, useQueryClient } from "react-query";
+import { useFirestoreDocument } from "@react-query-firebase/firestore";
+
 import { db } from "~/configs/firebase/firebase";
+
 import useCurrentUser from "~/shared/hooks/useCurrentUser";
 import { User } from "~/shared/models";
-import { collectIdsAndDocs } from "~/shared/utils";
 
 interface MessageProps {
   id: string;
   text: string;
   timestamp: string;
   userId: string;
+  attachments?: {
+    type: string;
+    data: string[];
+  };
 }
 
 const Message = forwardRef((props: MessageProps, ref: Ref<HTMLDivElement>) => {
-  const { text, userId } = props;
+  const { text, userId, attachments } = props;
 
   const { data: currentUser } = useCurrentUser();
 
@@ -32,9 +36,29 @@ const Message = forwardRef((props: MessageProps, ref: Ref<HTMLDivElement>) => {
 
   if (isCurrentUser()) {
     return (
-      <div ref={ref} className={`flex items-center gap-2 my-2 self-end`}>
-        <div className="py-1 px-3 rounded-full bg-gray-300">
-          <p>{text}</p>
+      <div
+        ref={ref}
+        className={`flex items-end justify-end gap-2 my-2 self-end w-4/6`}
+      >
+        <div className="flex flex-col">
+          {text.split(" ").join("").length !== 0 ? (
+            <div className="py-1 px-3 w-fit self-end rounded-full bg-gray-300">
+              <p>{text}</p>
+            </div>
+          ) : null}
+          {attachments ? (
+            <div className="pt-1">
+              {attachments.data.map((image) => (
+                <img
+                  key={image}
+                  src={image}
+                  alt=""
+                  className="w-full object-contain rounded-md cursor-pointer"
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          ) : null}
         </div>
         <img src={userData?.photoURL} className="h-7 w-7 rounded-full" alt="" />
       </div>
@@ -42,10 +66,27 @@ const Message = forwardRef((props: MessageProps, ref: Ref<HTMLDivElement>) => {
   }
 
   return (
-    <div ref={ref} className="flex items-center gap-2 my-2 ">
+    <div ref={ref} className="flex items-end gap-2 my-2 w-4/6">
       <img src={userData?.photoURL} className="h-7 w-7 rounded-full" alt="" />
-      <div className="py-1 px-3 rounded-full bg-primary text-white">
-        <p>{text}</p>
+      <div>
+        {text.split(" ").join("").length !== 0 ? (
+          <div className="py-1 px-3 rounded-full bg-primary text-white w-fit">
+            <p>{text}</p>
+          </div>
+        ) : null}
+        {attachments ? (
+          <div className="pt-1">
+            {attachments.data.map((image) => (
+              <img
+                key={image}
+                src={image}
+                alt=""
+                className="w-full object-contain rounded-md cursor-pointer"
+                loading="lazy"
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
     </div>
   );

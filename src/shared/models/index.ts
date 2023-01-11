@@ -24,11 +24,17 @@ export interface IUser {
   photoURL: string;
 }
 
+interface IAttachments {
+  type: string;
+  data: string[];
+}
+
 export interface IMessage {
   id: string;
   message: string;
   timestamp: string;
   userId: string;
+  attachments: IAttachments;
 }
 
 type ChatStatus = "active" | "deleted";
